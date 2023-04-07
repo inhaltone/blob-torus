@@ -7,7 +7,7 @@ import {ShaderPass} from "three/addons/postprocessing/ShaderPass.js";
 import {GammaCorrectionShader} from "three/addons/shaders/GammaCorrectionShader.js";
 import {BleachBypassShader} from "three/addons/shaders/BleachBypassShader.js";
 import {FilmPass} from "three/addons/postprocessing/FilmPass.js";
-
+import {noise} from "./noise.js";
 
 const BG_COLOR = new THREE.Color(1, 1, 1, 0);
 const COLOR_A = new THREE.Color(231, 50, 8);
