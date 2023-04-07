@@ -15,8 +15,8 @@ const EMISSION_COLOR = 0xf3a469;
 const params = {
     exposure: 0.05,
     bloomStrength: .1,
-    bloomThreshold: 0.1,
-    bloomRadius: 1
+    bloomThreshold: 0.9,
+    bloomRadius: 2
 };
 export default function renderBlob(props) {
     const renderer = new THREE.WebGLRenderer({canvas: props, antialias: true});
@@ -40,7 +40,7 @@ export default function renderBlob(props) {
 
     // Light the scene
     const godLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 1.8);
-    godLight.color.setHSL(0.6, 1, 0.6);
+    godLight.color.setHSL(0.65, 1, 0.1);
     godLight.groundColor.setHSL(0.095, 1, 0.75);
     godLight.position.set(0, 50, 0);
     scene.add(godLight);
@@ -68,16 +68,15 @@ export default function renderBlob(props) {
     // go for grain
     const gammaCorrection = new ShaderPass(GammaCorrectionShader);
     const effectBleach = new ShaderPass( BleachBypassShader );
-    const effectFilm = new FilmPass( .3, 0.025, 648, false );
+    // effectBleach.uniforms[ 'opacity' ].value = 0.15;
+    const effectFilm = new FilmPass( .2, 0.001, 720, false );
     composer.addPass(gammaCorrection);
     // composer.addPass(effectBleach);
     composer.addPass(effectFilm);
-    // composer.addPass(effectFilmBW);
-    // composer.addPass(effectVignette);
 
     const update = () => {
 
-        const time = performance.now() * 0.0005;
+        const time = performance.now() * 0.0002;
         // change 'k' value for more spikes
         let k = 1;
         const positions = sphere.geometry.attributes.position;
@@ -112,7 +111,7 @@ export default function renderBlob(props) {
     function animate() {
         // sphere.rotation.x += 0.01;
         // sphere.rotation.y += 0.01;
-        // sphere.rotation.z += 0.01;
+        sphere.rotation.z += 0.005;
 
         update();
         /* render scene and camera */
