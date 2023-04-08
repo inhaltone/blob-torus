@@ -14,6 +14,9 @@
  *
  */
 
+/*
+*Below is a recostruncted version as ES module
+ */
 function Grad(x, y, z) {
     this.x = x;
     this.y = y;
@@ -28,11 +31,11 @@ Grad.prototype.dot3 = function (x, y, z) {
     return this.x * x + this.y * y + this.z * z;
 };
 
-var grad3 = [new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
+let grad3 = [new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
     new Grad(1, 0, 1), new Grad(-1, 0, 1), new Grad(1, 0, -1), new Grad(-1, 0, -1),
     new Grad(0, 1, 1), new Grad(0, -1, 1), new Grad(0, 1, -1), new Grad(0, -1, -1)];
 
-var p = [151, 160, 137, 91, 90, 15,
+let p = [151, 160, 137, 91, 90, 15,
     131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
     190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
     88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166,
@@ -46,12 +49,12 @@ var p = [151, 160, 137, 91, 90, 15,
     49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254,
     138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180];
 // To remove the need for index wrapping, double the permutation table length
-var perm = new Array(512);
-var gradP = new Array(512);
+let perm = new Array(512);
+let gradP = new Array(512);
 
 // This isn't a very good seeding function, but it works ok. It supports 2^16
 // different seed values. Write something better if you need more seeds.
-const seed = function (seed) {
+const seed = (seed) => {
     if (seed > 0 && seed < 1) {
         // Scale the seed out
         seed *= 65536;
@@ -62,8 +65,8 @@ const seed = function (seed) {
         seed |= seed << 8;
     }
 
-    for (var i = 0; i < 256; i++) {
-        var v;
+    for (let i = 0; i < 256; i++) {
+        let v;
         if (i & 1) {
             v = p[i] ^ (seed & 255);
         } else {
@@ -77,19 +80,12 @@ const seed = function (seed) {
 
 seed(0);
 
-
-/*
-for(var i=0; i<256; i++) {
-  perm[i] = perm[i + 256] = p[i];
-  gradP[i] = gradP[i + 256] = grad3[perm[i] % 12];
-}*/
-
 // Skewing and unskewing factors for 2, 3, and 4 dimensions
-var F2 = 0.5 * (Math.sqrt(3) - 1);
-var G2 = (3 - Math.sqrt(3)) / 6;
+let F2 = 0.5 * (Math.sqrt(3) - 1);
+let G2 = (3 - Math.sqrt(3)) / 6;
 
-var F3 = 1 / 3;
-var G3 = 1 / 6;
+let F3 = 1 / 3;
+let G3 = 1 / 6;
 
 function fade(t) {
     return t * t * t * (t * (t * 6 - 15) + 10);
@@ -104,9 +100,9 @@ export const noise = {
 
     // ##### Perlin noise stuff
     // 3D Perlin Noise
-     perlin3: function(x, y, z) {
+    perlin3: function (x, y, z) {
         // Find unit grid cell containing point
-        var X = Math.floor(x), Y = Math.floor(y), Z = Math.floor(z);
+        let X = Math.floor(x), Y = Math.floor(y), Z = Math.floor(z);
         // Get relative xyz coordinates of point within that cell
         x = x - X;
         y = y - Y;
@@ -117,19 +113,19 @@ export const noise = {
         Z = Z & 255;
 
         // Calculate noise contributions from each of the eight corners
-        var n000 = gradP[X + perm[Y + perm[Z]]].dot3(x, y, z);
-        var n001 = gradP[X + perm[Y + perm[Z + 1]]].dot3(x, y, z - 1);
-        var n010 = gradP[X + perm[Y + 1 + perm[Z]]].dot3(x, y - 1, z);
-        var n011 = gradP[X + perm[Y + 1 + perm[Z + 1]]].dot3(x, y - 1, z - 1);
-        var n100 = gradP[X + 1 + perm[Y + perm[Z]]].dot3(x - 1, y, z);
-        var n101 = gradP[X + 1 + perm[Y + perm[Z + 1]]].dot3(x - 1, y, z - 1);
-        var n110 = gradP[X + 1 + perm[Y + 1 + perm[Z]]].dot3(x - 1, y - 1, z);
-        var n111 = gradP[X + 1 + perm[Y + 1 + perm[Z + 1]]].dot3(x - 1, y - 1, z - 1);
+        let n000 = gradP[X + perm[Y + perm[Z]]].dot3(x, y, z);
+        let n001 = gradP[X + perm[Y + perm[Z + 1]]].dot3(x, y, z - 1);
+        let n010 = gradP[X + perm[Y + 1 + perm[Z]]].dot3(x, y - 1, z);
+        let n011 = gradP[X + perm[Y + 1 + perm[Z + 1]]].dot3(x, y - 1, z - 1);
+        let n100 = gradP[X + 1 + perm[Y + perm[Z]]].dot3(x - 1, y, z);
+        let n101 = gradP[X + 1 + perm[Y + perm[Z + 1]]].dot3(x - 1, y, z - 1);
+        let n110 = gradP[X + 1 + perm[Y + 1 + perm[Z]]].dot3(x - 1, y - 1, z);
+        let n111 = gradP[X + 1 + perm[Y + 1 + perm[Z + 1]]].dot3(x - 1, y - 1, z - 1);
 
         // Compute the fade curve value for x, y, z
-        var u = fade(x);
-        var v = fade(y);
-        var w = fade(z);
+        let u = fade(x);
+        let v = fade(y);
+        let w = fade(z);
 
         // Interpolate
         return lerp(
