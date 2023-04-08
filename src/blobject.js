@@ -28,13 +28,13 @@ export default function renderBlob(props) {
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 3.5;
 
-    const geometry = new THREE.TorusGeometry(15, 6, 16, 100);
+    const geometry = new THREE.TorusGeometry(16, 6, 32, 100);
     const material = new THREE.MeshPhongMaterial({
         color: 0xf13804,
         specular: 0xffffff,
         shininess: 88.8,
         reflectivity: 1,
-        // emissive: 0xe43200
+        // emissive: 0xf13804
     });
     const sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
@@ -63,7 +63,7 @@ export default function renderBlob(props) {
     composer.addPass(bloomPass);
 
     // Some touch designer famous feedback effect
-    const afterimagePass = new AfterimagePass(0.99);
+    const afterimagePass = new AfterimagePass(0.98);
     composer.addPass(afterimagePass);
 
     // go for grain
