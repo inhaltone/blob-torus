@@ -9,14 +9,14 @@ import {BleachBypassShader} from "three/addons/shaders/BleachBypassShader.js";
 import {FilmPass} from "three/addons/postprocessing/FilmPass.js";
 import {noise} from "./noise.js";
 
-const BG_COLOR = new THREE.Color(0.3, 0.3, 0.3, 0);
+const BG_COLOR = new THREE.Color(0.6, 0.6, 0.6, 0);
 const COLOR_A = new THREE.Color(231, 50, 8);
 const COLOR_B = new THREE.Color(235, 139, 91);
 const EMISSION_COLOR = 0xf3a469;
 const params = {
-    exposure: 0.5,
-    bloomStrength: .4,
-    bloomThreshold: 0.2,
+    exposure: 0.4,
+    bloomStrength: .5,
+    bloomThreshold: 0.5,
     bloomRadius: 0.5
 };
 export default function renderBlob(props) {
@@ -33,7 +33,7 @@ export default function renderBlob(props) {
         color: 0xf13804,
         specular: 0xffffff,
         shininess: 88.8,
-        reflectivity: 1,
+        reflectivity: 1.,
         // emissive: 0xf13804
     });
     const sphere = new THREE.Mesh(geometry, material);
@@ -46,19 +46,20 @@ export default function renderBlob(props) {
     godLight.position.set(0, 50, 0);
     scene.add(godLight);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
-    ambientLight.castShadow = true;
-    // scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+    directionalLight.position.set(0, 50, 100);
+    scene.add(directionalLight);
 
     // Some SFX for eye pleasure
     const renderScene = new RenderPass(scene, camera);
 
-    const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     bloomPass.threshold = params.bloomThreshold;
     bloomPass.strength = params.bloomStrength;
     bloomPass.radius = params.bloomRadius;
 
-    const composer = new EffectComposer( renderer );
+    const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
 
@@ -69,9 +70,10 @@ export default function renderBlob(props) {
     // go for grain
     const gammaCorrection = new ShaderPass(GammaCorrectionShader);
     const effectBleach = new ShaderPass(BleachBypassShader);
-    effectBleach.uniforms[ 'opacity' ].value = 0.5;
-    const effectFilm = new FilmPass( .4, 0.001, 720, false );
+    effectBleach.uniforms['opacity'].value = 0.5;
+    const effectFilm = new FilmPass(.8, 0, 0, false);
     // composer.addPass(gammaCorrection);
+
     composer.addPass(effectBleach);
     composer.addPass(effectFilm);
 
@@ -93,7 +95,7 @@ export default function renderBlob(props) {
         // sphere.geometry.computeVertexNormals();
     }
 
-    window.addEventListener( 'resize', onWindowResize );
+    window.addEventListener('resize', onWindowResize);
 
     function onWindowResize() {
 
@@ -103,15 +105,21 @@ export default function renderBlob(props) {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
 
-        renderer.setSize( width, height );
-        composer.setSize( width, height );
+        renderer.setSize(width, height);
+        composer.setSize(width, height);
 
     }
 
     function animate() {
+        const time = Date.now() * 0.0005;
         // sphere.rotation.x += 0.001;
-        // sphere.rotation.y += 0.001;
+        // sphere.rotation.x = Math.sin(time * 0.2) * 2;
+        // sphere.rotation.y = Math.sin(time * 0.8) * 2;
         sphere.rotation.z += 0.004;
+
+        directionalLight.position.x = Math.sin(time * 0.7) * 1.2;
+        directionalLight.position.y = Math.cos(time * 0.5) * 2;
+        directionalLight.position.z = Math.cos(time * 0.3) * 2;
 
         update();
         /* render scene and camera */
